@@ -10,3 +10,50 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+```
+path2placement-frontend
+├─ .env
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ vite.jpg
+│  └─ viteLogo.png
+├─ README.md
+├─ src
+│  ├─ App.css
+│  ├─ App.jsx
+│  ├─ assets
+│  │  ├─ Loader.webp
+│  │  └─ placement-hero.svg
+│  ├─ components
+│  │  ├─ Features.jsx
+│  │  ├─ Hero1.jsx
+│  │  ├─ navbar.jsx
+│  │  └─ styles
+│  │     ├─ Features.css
+│  │     ├─ Hero1.css
+│  │     └─ navbar.css
+│  ├─ context
+│  │  └─ AuthContext.jsx
+│  ├─ index.css
+│  ├─ main.jsx
+│  ├─ pages
+│  │  ├─ Dashboard.jsx
+│  │  ├─ LandingPage.jsx
+│  │  ├─ Login.jsx
+│  │  ├─ Profile.jsx
+│  │  ├─ Register.jsx
+│  │  ├─ ResumeAnalyzer.jsx
+│  │  └─ styles
+│  │     ├─ Dashboard.css
+│  │     ├─ LoginRegister.css
+│  │     ├─ Profile.css
+│  │     └─ ResumeAnalyzer.css
+│  └─ services
+│     └─ supabaseClient.jsx
+└─ vite.config.js
+
+```
