@@ -1,0 +1,153 @@
+/* LandingPage.css */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 6%;      /* reduce side padding */
+  background: #ffff;
+  height: 100vh;
+  width: 100%;           /* full width */
+  box-sizing: border-box;
+  gap: 2rem;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 50%;        /* only half the screen */
+}
+
+.hero-content h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  color: #4b5563;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  padding: 0.9rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn.primary {
+  background-color: #111827;
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: #1f2937;
+}
+
+.btn.secondary {
+  background: transparent;
+  border: 2px solid #111827;
+  color: #111827;
+}
+
+.btn.secondary:hover {
+  background: #111827;
+  color: white;
+}
+
+.hero-logos {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hero-logos img {
+  height: 38px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.hero-logos img:hover {
+  opacity: 1;
+}
+
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end; /* push image to the right */
+  align-items: center;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* Hero Section */
+.hero {
+  flex-direction: row;
+}
+
+
+
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 4%;
+    height: auto;
+    gap: 1.5rem;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-content p {
+    font-size: 1.1rem;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .hero-image {
+    justify-content: center;
+  }
+
+  .hero-image img {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
+}

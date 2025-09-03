@@ -1,0 +1,102 @@
+/* Profile.css - Modern Card Profile Page */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background: #ffff;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.profile-card {
+  background: #fff;
+  padding: 2rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+  width: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+}
+
+.profile-header h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.profile-details p {
+  font-size: 1rem;
+  color: #555;
+  margin: 0;
+}
+
+.profile-details p span {
+  font-weight: 600;
+  color: #111;
+}
+
+
+.logout-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #ff7875;
+}
+
+
+/* Responsive */
+@media (max-width: 600px) {
+  .profile-card {
+    padding: 1.5rem 2rem;
+  }
+  .profile-header h2 {
+    font-size: 1.3rem;
+  }
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+}

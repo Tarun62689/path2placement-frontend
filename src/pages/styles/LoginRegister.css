@@ -1,0 +1,145 @@
+.form-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.form {
+  background: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+.form h2 {
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+  color: black;
+  text-align: center;
+}
+
+.form p {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: black;
+  text-align: center;
+}
+
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"] {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  margin-bottom: 1rem;
+  color: black;
+  border: 1px solid black;
+  background-color: #ffff;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+
+.form input:focus {
+  border-color: #555;
+  outline: none;
+}
+
+.agreeLabel {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.agreeLabel input {
+  margin-right: 0.5rem;
+  background-color: #ffff;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.75rem 0;
+  background-color: #4a90e2;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #357ab8;
+}
+
+.btn:disabled {
+  background-color: #a0c4f0;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.toggleText {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  color: #555;
+}
+
+.toggleText span {
+  color: #4a90e2;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.toggleText span:hover {
+  text-decoration: underline;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .form {
+    padding: 1.5rem 1.75rem;
+  }
+
+  .form h2 {
+    font-size: 1.5rem;
+  }
+
+  .form p {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Loader overlay */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8); /* semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loader-webp {
+  width: 150px;
+  height: auto;
+}
