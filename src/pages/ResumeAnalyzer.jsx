@@ -47,7 +47,9 @@ const ModernResumeAnalyzer = () => {
     try {
       if (typeof row.result === "string") parsedResult = JSON.parse(row.result);
       else if (typeof row.result === "object" && row.result !== null) parsedResult = row.result;
-    } catch { parsedResult = {}; }
+    } catch {
+      parsedResult = {};
+    }
 
     return {
       ...row,
@@ -73,7 +75,7 @@ const ModernResumeAnalyzer = () => {
         if (resumeList.length > 0) setSelectedResume(resumeList[0].filePath);
 
         const historyRes = await axios.get(
-          `https://path2placement-backend.onrender.com/api/resume-analysis/fetch-analysis`,
+          "https://path2placement-backend.onrender.com/api/resume-analysis/fetch-analysis",
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -81,19 +83,25 @@ const ModernResumeAnalyzer = () => {
         setHistory(normalized);
       } catch (err) {
         console.warn("Failed to fetch resumes/history:", err.message);
-      } finally { setLoading(false); }
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, [profile, token]);
 
-  const handleFileChange = (e) => setResumeFile(e.target.files[0]);
-  const handleUpload = async () => {
-    if (!resumeFile) return alert("Select a resume to upload.");
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setResumeFile(file);
+
+    // Auto upload after selecting file
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append("resume", resumeFile);
+      formData.append("resume", file);
       formData.append("user_id", profile.user.id);
+
       const res = await axios.post(
         "https://path2placement-backend.onrender.com/api/resume/upload",
         formData,
@@ -108,7 +116,9 @@ const ModernResumeAnalyzer = () => {
     } catch (err) {
       console.error("Upload error:", err.response?.data || err.message);
       alert("Upload failed.");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAnalyze = async () => {
@@ -129,7 +139,9 @@ const ModernResumeAnalyzer = () => {
     } catch (err) {
       console.error("Analysis error:", err.response?.data || err.message);
       alert("Analysis failed.");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSelectHistory = (h) => {
@@ -138,18 +150,25 @@ const ModernResumeAnalyzer = () => {
     setJobRole(h.job_role);
   };
 
-  const scoreData = analysis ? [{ name: "Match Score", value: analysis.score, fill: "#4f46e5" }]
+  const scoreData = analysis
+    ? [{ name: "Match Score", value: analysis.score, fill: "#4f46e5" }]
     : [{ name: "Match Score", value: 0, fill: "#ddd" }];
 
   const skillsFoundData = analysis?.skills_found?.map((s) => ({ skill: s, count: 1 })) || [];
   const skillGapsData = analysis?.skill_gaps?.map((s) => ({ skill: s, count: 1 })) || [];
 
-  const trendData = history.slice(0, 10).map(h => ({
-    date: new Date(h.created_at).toLocaleDateString(),
-    score: h.score
-  })).reverse();
+  const trendData = history
+    .slice(0, 10)
+    .map((h) => ({
+      date: new Date(h.created_at).toLocaleDateString(),
+      score: h.score,
+    }))
+    .reverse();
 
-  const avgScore = history.length > 0 ? (history.reduce((sum, h) => sum + h.score, 0) / history.length).toFixed(1) : 0;
+  const avgScore =
+    history.length > 0
+      ? (history.reduce((sum, h) => sum + h.score, 0) / history.length).toFixed(1)
+      : 0;
 
   return (
     <div className="modern-dashboard">
@@ -161,7 +180,9 @@ const ModernResumeAnalyzer = () => {
       )}
 
       {/* Mobile Sidebar Toggle */}
-      <button className="mobile-sidebar-toggle" onClick={() => setSidebarOpen(true)}>☰</button>
+      <button className="mobile-sidebar-toggle" onClick={() => setSidebarOpen(true)}>
+        ☰
+      </button>
 
       {/* Sidebar */}
       <AnimatePresence>
@@ -176,21 +197,37 @@ const ModernResumeAnalyzer = () => {
             <div className="sidebar-header">
               <h2>Resume Analyzer</h2>
               {window.innerWidth <= 768 && (
-                <button className="close-sidebar" onClick={() => setSidebarOpen(false)}>✕</button>
+                <button className="close-sidebar" onClick={() => setSidebarOpen(false)}>
+                  ✕
+                </button>
               )}
             </div>
             <ul className="sidebar-list">
               {resumes.map((r, idx) => (
-                <motion.li key={idx} className={selectedResume === r.filePath ? "selected" : ""}
-                  whileHover={{ scale: 1.05 }} onClick={() => setSelectedResume(r.filePath)}>
+                <motion.li
+                  key={idx}
+                  className={selectedResume === r.filePath ? "selected" : ""}
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() => setSelectedResume(r.filePath)}
+                >
                   <FiFileText className="icon" /> {r.originalName}
                 </motion.li>
               ))}
             </ul>
-            <motion.button className="btn-upload-sidebar" whileHover={{ scale: 1.05 }} onClick={() => fileInputRef.current.click()}>
+            <motion.button
+              className="btn-upload-sidebar"
+              whileHover={{ scale: 1.05 }}
+              onClick={() => fileInputRef.current.click()}
+            >
               <FiUpload /> Upload Resume
             </motion.button>
-            <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx" style={{ display: "none" }} onChange={handleFileChange} />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
           </motion.aside>
         )}
       </AnimatePresence>
@@ -198,18 +235,37 @@ const ModernResumeAnalyzer = () => {
       {/* Main Panel */}
       <main className="main-panel">
         <div className="kpi-cards">
-          <motion.div className="kpi-card" whileHover={{ scale: 1.03 }}>Avg Score: {avgScore}%</motion.div>
-          <motion.div className="kpi-card" whileHover={{ scale: 1.03 }}>Total Resumes: {resumes.length}</motion.div>
-          <motion.div className="kpi-card" whileHover={{ scale: 1.03 }}>Skill Gaps: {skillGapsData.length}</motion.div>
+          <motion.div className="kpi-card" whileHover={{ scale: 1.03 }}>
+            Avg Score: {avgScore}%
+          </motion.div>
+          <motion.div className="kpi-card" whileHover={{ scale: 1.03 }}>
+            Total Resumes: {resumes.length}
+          </motion.div>
+          <motion.div className="kpi-card" whileHover={{ scale: 1.03 }}>
+            Skill Gaps: {skillGapsData.length}
+          </motion.div>
         </div>
 
         {analysis && (
-          <motion.div className="dashboard-card analysis-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h3>{selectedResume?.split("/").pop()} - {jobRole}</h3>
+          <motion.div
+            className="dashboard-card analysis-card"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h3>
+              {selectedResume?.split("/").pop()} - {jobRole}
+            </h3>
             <div className="analysis-section">
               <div className="radial-chart">
                 <ResponsiveContainer width="100%" height={200}>
-                  <RadialBarChart cx="50%" cy="50%" innerRadius="70%" outerRadius="100%" barSize={24} data={scoreData}>
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="70%"
+                    outerRadius="100%"
+                    barSize={24}
+                    data={scoreData}
+                  >
                     <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
                     <RadialBar background dataKey="value" cornerRadius={12} />
                   </RadialBarChart>
@@ -221,13 +277,23 @@ const ModernResumeAnalyzer = () => {
                 <div className="bar-chart">
                   <h4>Skills Matched</h4>
                   <ResponsiveContainer width="100%" height={150}>
-                    <BarChart data={skillsFoundData}><XAxis dataKey="skill" /><YAxis /><Tooltip /><Bar dataKey="count" fill="#10b981" /></BarChart>
+                    <BarChart data={skillsFoundData}>
+                      <XAxis dataKey="skill" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="#10b981" />
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
                 <div className="bar-chart">
                   <h4>Skill Gaps</h4>
                   <ResponsiveContainer width="100%" height={150}>
-                    <BarChart data={skillGapsData}><XAxis dataKey="skill" /><YAxis /><Tooltip /><Bar dataKey="count" fill="#ef4444" /></BarChart>
+                    <BarChart data={skillGapsData}>
+                      <XAxis dataKey="skill" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="#ef4444" />
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -240,7 +306,13 @@ const ModernResumeAnalyzer = () => {
                     <XAxis dataKey="date" />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
-                    <Line type="monotone" dataKey="score" stroke="#524f7cff" strokeWidth={2} dot={{ r: 4 }} />
+                    <Line
+                      type="monotone"
+                      dataKey="score"
+                      stroke="#524f7cff"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -248,16 +320,38 @@ const ModernResumeAnalyzer = () => {
           </motion.div>
         )}
 
-        <motion.div className="dashboard-card analyze-form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <input type="text" placeholder="Job Role" value={jobRole} onChange={e => setJobRole(e.target.value)} />
-          <button className="btn-analyze" onClick={handleAnalyze} disabled={loading}>{loading ? "Analyzing..." : "Analyze"}</button>
+        <motion.div
+          className="dashboard-card analyze-form"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <input
+            type="text"
+            placeholder="Job Role"
+            value={jobRole}
+            onChange={(e) => setJobRole(e.target.value)}
+          />
+          <button className="btn-analyze" onClick={handleAnalyze} disabled={loading}>
+            {loading ? "Analyzing..." : "Analyze"}
+          </button>
         </motion.div>
 
-        <motion.div className="dashboard-card history-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <motion.div
+          className="dashboard-card history-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
           <h3>Past Analyses</h3>
-          <br/>
+          <br />
           <table className="history-table">
-            <thead><tr><th>Resume</th><th>Job Role</th><th>Score</th><th>Date</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Resume</th>
+                <th>Job Role</th>
+                <th>Score</th>
+                <th>Date</th>
+              </tr>
+            </thead>
             <tbody>
               {history.length > 0 ? (
                 history.map((h, i) => (
@@ -286,7 +380,6 @@ const ModernResumeAnalyzer = () => {
                 </tr>
               )}
             </tbody>
-
           </table>
         </motion.div>
       </main>
