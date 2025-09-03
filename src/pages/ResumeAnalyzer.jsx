@@ -17,7 +17,7 @@ import {
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiUpload, FiFileText } from "react-icons/fi";
-import loaderImg from "../assets/loader.webp";
+import loaderImg from "../assets/Loader.webp";
 import "./styles/ResumeAnalyzer.css";
 
 const ModernResumeAnalyzer = () => {
