@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import loaderWebp from "../assets/loader.webp";
+import loaderWebp from "../assets/Loader.webp";
 import "./styles/LoginRegister.css";
 
 const Login = () => {
