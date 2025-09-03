@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "./styles/Navbar.css";
+import "./styles/navbar.css";
 import { FaFileAlt, FaUserCircle, FaCode, FaBars, FaTimes, FaTachometerAlt } from "react-icons/fa"; // ✅ added Dashboard icon
 import { useAuth } from "../context/AuthContext";
 
@@ -20,7 +20,6 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar">
-        {/* Logo */}
         <div className="navbar-brand">
           <img src="/viteLogo.png" alt="Logo" className="logo-image" />
           <Link to="/" className="navbar-logo">
