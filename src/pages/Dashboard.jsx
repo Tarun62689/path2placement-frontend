@@ -27,12 +27,10 @@ import "./styles/Dashboard.css";
 
 const COLORS = ["#4F46E5", "#22C55E", "#F59E0B", "#EF4444", "#3B82F6"];
 
-// Utility functions to safely handle numbers
-const safeNumber = (value) => {
-  const n = parseFloat(value);
-  return isNaN(n) ? 0 : n;
-};
-const safePercent = (num, denom) => (denom > 0 ? ((num / denom) * 100).toFixed(2) : 0);
+// Utils
+const safeNumber = (v) => (isNaN(parseFloat(v)) ? 0 : parseFloat(v));
+const safePercent = (num, denom) =>
+  denom > 0 ? ((num / denom) * 100).toFixed(2) : 0;
 
 const Dashboard = () => {
   const [placements, setPlacements] = useState([]);
@@ -61,7 +59,7 @@ const Dashboard = () => {
       if (error) throw error;
       setPlacements(data);
     } catch (err) {
-      console.error("Error fetching data:", err.message);
+      console.error("Error fetching:", err.message);
     } finally {
       setLoading(false);
     }
@@ -70,87 +68,137 @@ const Dashboard = () => {
   if (loading) return <div className="dashboard-loader">Loading dashboard...</div>;
   if (!placements.length) return <div className="dashboard-loader">No data available</div>;
 
-  // --- Filtering ---
-  let filteredData = placements;
-  if (selectedYear !== "All") filteredData = filteredData.filter(c => c["Year"] === selectedYear);
-  if (selectedCollege !== "All") filteredData = filteredData.filter(c => c["College Name"] === selectedCollege);
+  // Filtering
+  let filtered = placements;
+  if (selectedYear !== "All")
+    filtered = filtered.filter((c) => c["Year"] === selectedYear);
+  if (selectedCollege !== "All")
+    filtered = filtered.filter((c) => c["College Name"] === selectedCollege);
 
-  // --- KPIs ---
-  const totalStudents = filteredData.reduce((s, c) => s + safeNumber(c["Total Students Eligible"]), 0);
-  const placedStudents = filteredData.reduce((s, c) => s + safeNumber(c["Total Students Placed"]), 0);
+  // KPIs
+  const totalStudents = filtered.reduce(
+    (s, c) => s + safeNumber(c["Total Students Eligible"]),
+    0
+  );
+  const placedStudents = filtered.reduce(
+    (s, c) => s + safeNumber(c["Total Students Placed"]),
+    0
+  );
   const avgPlacementPercent = safePercent(placedStudents, totalStudents);
-  const avgMedianSalary = (filteredData.reduce((s, c) => s + safeNumber(c["Median Salary (LPA)"]), 0) / (filteredData.length || 1)).toFixed(2);
+  const avgMedianSalary = (
+    filtered.reduce((s, c) => s + safeNumber(c["Median Salary (LPA)"]), 0) /
+    (filtered.length || 1)
+  ).toFixed(2);
 
-  // --- Chart Data ---
-  const collegeChartData = filteredData.map(c => ({
+  // Chart Data
+  const collegeChartData = filtered.map((c) => ({
     name: c["College Name"] || "Unknown",
     placed: safeNumber(c["Total Students Placed"]),
     eligible: safeNumber(c["Total Students Eligible"]),
   }));
 
   const deptTotals = {
-    CSE: filteredData.reduce((s, c) => s + safeNumber(c["CSE(Placed)"]), 0),
-    ECE: filteredData.reduce((s, c) => s + safeNumber(c["ECE(Placed)"]), 0),
-    ME: filteredData.reduce((s, c) => s + safeNumber(c["ME(Placed)"]), 0),
-    EEE: filteredData.reduce((s, c) => s + safeNumber(c["EEE(Placed)"]), 0),
+    CSE: filtered.reduce((s, c) => s + safeNumber(c["CSE(Placed)"]), 0),
+    ECE: filtered.reduce((s, c) => s + safeNumber(c["ECE(Placed)"]), 0),
+    ME: filtered.reduce((s, c) => s + safeNumber(c["ME(Placed)"]), 0),
+    EEE: filtered.reduce((s, c) => s + safeNumber(c["EEE(Placed)"]), 0),
   };
-  const deptChartData = Object.keys(deptTotals).map(d => ({ name: d, value: deptTotals[d] }));
+  const deptChartData = Object.keys(deptTotals).map((d) => ({
+    name: d,
+    value: deptTotals[d],
+  }));
 
-  const yearTrendData = filteredData.map(c => ({
+  const yearTrendData = filtered.map((c) => ({
     year: c["Year"] || "Unknown",
     avg: safeNumber(c["Median Salary (LPA)"]),
     max: safeNumber(c["Highest Package (LPA)"]),
     percent: safeNumber(c["Placement Percentage"]),
   }));
 
-  const scatterData = filteredData.map(c => ({
+  const scatterData = filtered.map((c) => ({
     college: c["College Name"] || "Unknown",
     salary: safeNumber(c["Median Salary (LPA)"]),
     percent: safeNumber(c["Placement Percentage"]),
   }));
 
-  const uniqueYears = ["All", ...new Set(placements.map(c => c["Year"]))];
-  const uniqueColleges = ["All", ...new Set(placements.map(c => c["College Name"]))];
+  const uniqueYears = ["All", ...new Set(placements.map((c) => c["Year"]))];
+  const uniqueColleges = [
+    "All",
+    ...new Set(placements.map((c) => c["College Name"])),
+  ];
 
   return (
     <div className="dashboard-container">
       {/* Sidebar Toggle */}
-      <button className="dashboard-mobile-toggle" onClick={() => setSidebarOpen(!isSidebarOpen)}>☰</button>
+      <button
+        className="dashboard-mobile-toggle"
+        onClick={() => setSidebarOpen(true)}
+      >
+        ☰
+      </button>
 
       {/* Sidebar */}
       <aside className={`dashboard-sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="dashboard-sidebar-header">
           <h2>Filters</h2>
-          <button className="dashboard-sidebar-close" onClick={() => setSidebarOpen(false)}>✕</button>
+          <button
+            className="dashboard-sidebar-close"
+            onClick={() => setSidebarOpen(false)}
+          >
+            ✕
+          </button>
         </div>
 
         <div className="dashboard-filter-group">
           <label>Year</label>
-          <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)}>
-            {uniqueYears.map(y => <option key={y}>{y}</option>)}
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+          >
+            {uniqueYears.map((y) => (
+              <option key={y}>{y}</option>
+            ))}
           </select>
         </div>
 
         <div className="dashboard-filter-group">
           <label>College</label>
-          <select value={selectedCollege} onChange={e => setSelectedCollege(e.target.value)}>
-            {uniqueColleges.map(c => <option key={c}>{c}</option>)}
+          <select
+            value={selectedCollege}
+            onChange={(e) => setSelectedCollege(e.target.value)}
+          >
+            {uniqueColleges.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
           </select>
         </div>
 
         <h2>Charts</h2>
         <div className="dashboard-chart-toggle">
-          {Object.keys(visibleCharts).map(chart => (
+          {Object.keys(visibleCharts).map((chart) => (
             <button
               key={chart}
               className={visibleCharts[chart] ? "active" : ""}
-              onClick={() => setVisibleCharts({ ...visibleCharts, [chart]: !visibleCharts[chart] })}
+              onClick={() =>
+                setVisibleCharts({
+                  ...visibleCharts,
+                  [chart]: !visibleCharts[chart],
+                })
+              }
             >
               {visibleCharts[chart] ? `Hide ${chart}` : `Show ${chart}`}
             </button>
           ))}
         </div>
       </aside>
+
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="dashboard-overlay active"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* Main Panel */}
       <main className="dashboard-main-panel">
@@ -197,8 +245,17 @@ const Dashboard = () => {
               <h4>Placements by Department</h4>
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
-                  <Pie data={deptChartData} dataKey="value" cx="50%" cy="50%" outerRadius={80} label>
-                    {deptChartData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                  <Pie
+                    data={deptChartData}
+                    dataKey="value"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                  >
+                    {deptChartData.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
                   </Pie>
                   <Tooltip />
                   <Legend />
@@ -216,8 +273,18 @@ const Dashboard = () => {
                   <YAxis />
                   <CartesianGrid stroke="#eee" />
                   <Tooltip />
-                  <Line type="monotone" dataKey="avg" stroke="#22C55E" name="Median Salary" />
-                  <Line type="monotone" dataKey="max" stroke="#EF4444" name="Highest Package" />
+                  <Line
+                    type="monotone"
+                    dataKey="avg"
+                    stroke="#22C55E"
+                    name="Median Salary"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="max"
+                    stroke="#EF4444"
+                    name="Highest Package"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -232,7 +299,12 @@ const Dashboard = () => {
                   <YAxis />
                   <CartesianGrid strokeDasharray="3 3" />
                   <Tooltip />
-                  <Area type="monotone" dataKey="percent" stroke="#3B82F6" fill="#3B82F6" />
+                  <Area
+                    type="monotone"
+                    dataKey="percent"
+                    stroke="#3B82F6"
+                    fill="#3B82F6"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -248,7 +320,11 @@ const Dashboard = () => {
                   <YAxis type="number" dataKey="percent" name="Placement %" />
                   <ZAxis range={[60, 200]} />
                   <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-                  <Scatter name="Colleges" data={scatterData} fill="#F59E0B" />
+                  <Scatter
+                    name="Colleges"
+                    data={scatterData}
+                    fill="#F59E0B"
+                  />
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
@@ -258,10 +334,19 @@ const Dashboard = () => {
             <div className="dashboard-chart-box">
               <h4>Department Contribution</h4>
               <ResponsiveContainer width="100%" height={250}>
-                <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" barSize={15} data={deptChartData}>
+                <RadialBarChart
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="20%"
+                  outerRadius="90%"
+                  barSize={15}
+                  data={deptChartData}
+                >
                   <PolarAngleAxis dataKey="name" type="category" />
                   <RadialBar background clockWise dataKey="value">
-                    {deptChartData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                    {deptChartData.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
                   </RadialBar>
                   <Legend />
                   <Tooltip />
