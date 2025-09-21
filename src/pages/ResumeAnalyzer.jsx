@@ -30,37 +30,19 @@ const ModernResumeAnalyzer = () => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  );
   const fileInputRef = useRef(null);
 
-  // If user is not logged in, show login message
-  if (!token || !profile?.user?.id) {
-    return (
-      <div className="login-required-message">
-        <h2>Please Login to Continue</h2>
-        <p>You need to login to access the Resume Analyzer.</p>
-      </div>
-    );
-  }
+  // Track window resize safely
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const normalizeRow = (row) => {
-    let parsedResult = {};
-    try {
-      if (typeof row.result === "string") parsedResult = JSON.parse(row.result);
-      else if (typeof row.result === "object" && row.result !== null) parsedResult = row.result;
-    } catch {
-      parsedResult = {};
-    }
-
-    return {
-      ...row,
-      parsedResult,
-      score: parsedResult?.score ? Number(parsedResult.score) : 0,
-      job_role: row.job_role || parsedResult?.job_role || "Unknown Role",
-      resume_path: row.resume_path || "Unknown Resume",
-      created_at: row.created_at || new Date().toISOString(),
-    };
-  };
-
+  // Fetch resumes and history
   useEffect(() => {
     const fetchData = async () => {
       if (!token || !profile?.user?.id) return;
@@ -79,7 +61,24 @@ const ModernResumeAnalyzer = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const normalized = (historyRes.data?.analyses || []).map(normalizeRow);
+        const normalized = (historyRes.data?.analyses || []).map((row) => {
+          let parsedResult = {};
+          try {
+            if (typeof row.result === "string") parsedResult = JSON.parse(row.result);
+            else if (typeof row.result === "object" && row.result !== null)
+              parsedResult = row.result;
+          } catch {
+            parsedResult = {};
+          }
+          return {
+            ...row,
+            parsedResult,
+            score: parsedResult?.score ? Number(parsedResult.score) : 0,
+            job_role: row.job_role || parsedResult?.job_role || "Unknown Role",
+            resume_path: row.resume_path || "Unknown Resume",
+            created_at: row.created_at || new Date().toISOString(),
+          };
+        });
         setHistory(normalized);
       } catch (err) {
         console.warn("Failed to fetch resumes/history:", err.message);
@@ -134,7 +133,22 @@ const ModernResumeAnalyzer = () => {
       const newAnalysis = { ...res.data.analysis, publicUrl: res.data.publicUrl };
       setAnalysis(newAnalysis);
 
-      const newRecord = normalizeRow(res.data.record);
+      const row = res.data.record;
+      let parsedResult = {};
+      try {
+        if (typeof row.result === "string") parsedResult = JSON.parse(row.result);
+        else if (typeof row.result === "object" && row.result !== null) parsedResult = row.result;
+      } catch {
+        parsedResult = {};
+      }
+      const newRecord = {
+        ...row,
+        parsedResult,
+        score: parsedResult?.score ? Number(parsedResult.score) : 0,
+        job_role: row.job_role || parsedResult?.job_role || "Unknown Role",
+        resume_path: row.resume_path || "Unknown Resume",
+        created_at: row.created_at || new Date().toISOString(),
+      };
       setHistory((prev) => [newRecord, ...prev]);
     } catch (err) {
       console.error("Analysis error:", err.response?.data || err.message);
@@ -159,20 +173,23 @@ const ModernResumeAnalyzer = () => {
 
   const trendData = history
     .slice(0, 10)
-    .map((h) => ({
-      date: new Date(h.created_at).toLocaleDateString(),
-      score: h.score,
-    }))
+    .map((h) => ({ date: new Date(h.created_at).toLocaleDateString(), score: h.score }))
     .reverse();
 
   const avgScore =
-    history.length > 0
-      ? (history.reduce((sum, h) => sum + h.score, 0) / history.length).toFixed(1)
-      : 0;
+    history.length > 0 ? (history.reduce((sum, h) => sum + h.score, 0) / history.length).toFixed(1) : 0;
+
+  if (!token || !profile?.user?.id) {
+    return (
+      <div className="login-required-message">
+        <h2>Please Login to Continue</h2>
+        <p>You need to login to access the Resume Analyzer.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="modern-dashboard">
-      {/* Loader */}
       {loading && (
         <div className="loader-overlay">
           <img src={loaderImg} alt="Loading..." className="loader-image" />
@@ -186,7 +203,7 @@ const ModernResumeAnalyzer = () => {
 
       {/* Sidebar */}
       <AnimatePresence>
-        {(isSidebarOpen || window.innerWidth > 768) && (
+        {(isSidebarOpen || windowWidth > 768) && (
           <motion.aside
             className="sidebar"
             initial={{ x: -300, opacity: 0 }}
@@ -196,7 +213,7 @@ const ModernResumeAnalyzer = () => {
           >
             <div className="sidebar-header">
               <h2>Resume Analyzer</h2>
-              {window.innerWidth <= 768 && (
+              {windowWidth <= 768 && (
                 <button className="close-sidebar" onClick={() => setSidebarOpen(false)}>
                   ✕
                 </button>
@@ -258,14 +275,7 @@ const ModernResumeAnalyzer = () => {
             <div className="analysis-section">
               <div className="radial-chart">
                 <ResponsiveContainer width="100%" height={200}>
-                  <RadialBarChart
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="70%"
-                    outerRadius="100%"
-                    barSize={24}
-                    data={scoreData}
-                  >
+                  <RadialBarChart cx="50%" cy="50%" innerRadius="70%" outerRadius="100%" barSize={24} data={scoreData}>
                     <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
                     <RadialBar background dataKey="value" cornerRadius={12} />
                   </RadialBarChart>
@@ -306,13 +316,7 @@ const ModernResumeAnalyzer = () => {
                     <XAxis dataKey="date" />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="score"
-                      stroke="#524f7cff"
-                      strokeWidth={2}
-                      dot={{ r: 4 }}
-                    />
+                    <Line type="monotone" dataKey="score" stroke="#524f7cff" strokeWidth={2} dot={{ r: 4 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -320,27 +324,14 @@ const ModernResumeAnalyzer = () => {
           </motion.div>
         )}
 
-        <motion.div
-          className="dashboard-card analyze-form"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <input
-            type="text"
-            placeholder="Job Role"
-            value={jobRole}
-            onChange={(e) => setJobRole(e.target.value)}
-          />
+        <motion.div className="dashboard-card analyze-form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <input type="text" placeholder="Job Role" value={jobRole} onChange={(e) => setJobRole(e.target.value)} />
           <button className="btn-analyze" onClick={handleAnalyze} disabled={loading}>
             {loading ? "Analyzing..." : "Analyze"}
           </button>
         </motion.div>
 
-        <motion.div
-          className="dashboard-card history-card"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <motion.div className="dashboard-card history-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h3>Past Analyses</h3>
           <br />
           <table className="history-table">
@@ -355,11 +346,7 @@ const ModernResumeAnalyzer = () => {
             <tbody>
               {history.length > 0 ? (
                 history.map((h, i) => (
-                  <tr
-                    key={h.id || i}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleSelectHistory(h)}
-                  >
+                  <tr key={h.id || i} style={{ cursor: "pointer" }} onClick={() => handleSelectHistory(h)}>
                     <td>{h.resume_path?.split("/").pop()}</td>
                     <td>{h.job_role}</td>
                     <td>{h.score.toFixed(1)}%</td>
