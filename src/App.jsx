@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// App.jsx
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -10,7 +11,7 @@ import "./App.css";
 
 function App() {
   return (
-    <Router>
+    <>
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -20,7 +21,7 @@ function App() {
         <Route path="/resume-analyzer" element={<ResumweAnalyzer />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-    </Router>
+    </>
   );
 }
 
