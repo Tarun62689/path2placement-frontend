@@ -1,10 +1,10 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { FaChartLine, FaSearch, FaChartBar, FaTrophy } from "react-icons/fa";
+import { FaChartArea, FaSearch, FaChartBar, FaTrophy } from "react-icons/fa";
 import "./styles/PlacementAnalysis.css";
 
 const links = [
-  { name: "Prediction", icon: <FaChartLine />, path: "prediction" },
+  { name: "Prediction", icon: <FaChartArea />, path: "prediction" },
   { name: "Insights", icon: <FaChartBar />, path: "insights" },
   { name: "Growth", icon: <FaTrophy />, path: "growth" },
   { name: "Finder", icon: <FaSearch />, path: "finder" },
