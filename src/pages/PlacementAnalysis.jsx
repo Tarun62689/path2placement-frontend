@@ -5,9 +5,9 @@ import "./styles/PlacementAnalysis.css";
 
 const links = [
   { name: "Prediction", icon: <FaChartArea />, path: "prediction" },
+  { name: "Finder", icon: <FaSearch />, path: "finder" },
   { name: "Insights", icon: <FaChartBar />, path: "insights" },
   { name: "Growth", icon: <FaTrophy />, path: "growth" },
-  { name: "Finder", icon: <FaSearch />, path: "finder" },
 ];
 
 function PlacementAnalysis() {
