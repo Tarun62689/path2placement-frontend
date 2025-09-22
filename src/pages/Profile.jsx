@@ -1,4 +1,3 @@
-// src/pages/Profile.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -9,7 +8,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout(); // ✅ clear token & profile
+    logout();
     navigate("/");
   };
 
@@ -29,17 +28,17 @@ const Profile = () => {
     );
   }
 
+  const nameInitial = profile.profile?.name
+    ? profile.profile.name.charAt(0).toUpperCase()
+    : "U";
+
   return (
     <div className="profile-container">
       <div className="profile-card">
         <div className="profile-header">
-          <div className="profile-avatar">
-            {profile.profile?.name
-              ? profile.profile.name.charAt(0).toUpperCase()
-              : "U"}
-          </div>
+          <div className="profile-avatar">{nameInitial}</div>
           <h2>
-            Welcome, {profile.profile?.name || profile.user?.email || "User"}
+            {profile.profile?.name || profile.user?.email || "User"}
           </h2>
         </div>
 
@@ -49,7 +48,7 @@ const Profile = () => {
           <p><span>Role:</span> {profile.profile?.role || "Student"}</p>
         </div>
 
-        <button className="btn logout-btn" onClick={handleLogout}>
+        <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
       </div>
