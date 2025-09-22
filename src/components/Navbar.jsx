@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles/Navbar.css";
-import { FaFileAlt, FaUserCircle, FaCode, FaBars, FaTimes, FaTachometerAlt } from "react-icons/fa"; // ✅ added Dashboard icon
+import {
+  FaFileAlt,
+  FaUserCircle,
+  FaCode,
+  FaBars,
+  FaTimes,
+  FaTachometerAlt,
+  FaChartLine, // ✅ Placement Analysis icon
+} from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
@@ -45,8 +53,13 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/resume-analyzer">
+            <Link to="/resume-analyzer" onClick={closeMenu}>
               <FaFileAlt className="icon" /> Resume Analyzer
+            </Link>
+          </li>
+          <li>
+            <Link to="/placement-analysis/prediction" onClick={closeMenu}>
+              <FaChartLine className="icon" /> Placement Analysis
             </Link>
           </li>
         </ul>
@@ -95,6 +108,11 @@ const Navbar = () => {
             <li>
               <Link to="/resume-analyzer" onClick={closeMenu}>
                 <FaFileAlt className="icon" /> Resume Analyzer
+              </Link>
+            </li>
+            <li>
+              <Link to="/placement-analysis/prediction" onClick={closeMenu}>
+                <FaChartLine className="icon" /> Placement Analysis
               </Link>
             </li>
           </ul>

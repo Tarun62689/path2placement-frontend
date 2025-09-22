@@ -57,3 +57,57 @@ path2placement-frontend
 └─ vite.config.js
 
 ```
+```
+path2placement-frontend
+├─ .env
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ vite.jpg
+│  ├─ viteLogo.png
+│  └─ _redirects
+├─ README.md
+├─ src
+│  ├─ App.css
+│  ├─ App.jsx
+│  ├─ assets
+│  │  ├─ Loader.webp
+│  │  └─ placement-hero.svg
+│  ├─ components
+│  │  ├─ Features.jsx
+│  │  ├─ Hero1.jsx
+│  │  ├─ Navbar.jsx
+│  │  └─ styles
+│  │     ├─ Features.css
+│  │     ├─ Hero1.css
+│  │     └─ Navbar.css
+│  ├─ context
+│  │  └─ AuthContext.jsx
+│  ├─ index.css
+│  ├─ main.jsx
+│  ├─ pages
+│  │  ├─ Dashboard.jsx
+│  │  ├─ LandingPage.jsx
+│  │  ├─ Login.jsx
+│  │  ├─ Placement
+│  │  │  ├─ Finder.jsx
+│  │  │  ├─ Growth.jsx
+│  │  │  ├─ Insights.jsx
+│  │  │  └─ Prediction.jsx
+│  │  ├─ PlacementAnalysis.jsx
+│  │  ├─ Profile.jsx
+│  │  ├─ Register.jsx
+│  │  ├─ ResumeAnalyzer.jsx
+│  │  └─ styles
+│  │     ├─ Dashboard.css
+│  │     ├─ LoginRegister.css
+│  │     ├─ PlacementAnalysis.css
+│  │     ├─ Profile.css
+│  │     └─ ResumeAnalyzer.css
+│  └─ services
+│     └─ supabaseClient.jsx
+└─ vite.config.js
+
+```

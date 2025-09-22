@@ -1,0 +1,129 @@
+/* Placement Analysis Sidebar - Compact Glassy Static Style Centered */
+.placement-analysis-container {
+  display: flex;
+  background: #ffff;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.sidebar-vertical {
+  width: 60px; /* keep compact */
+  background: rgba(229, 231, 235, 0.92); /* light glassy */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(31, 38, 135, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  position: fixed; /* fix to page */
+  top: 50%; /* center vertically */
+  left: 20px; /* distance from left */
+  transform: translateY(-50%);
+  z-index: 1000;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Icon Menu */
+.icon-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.icon-menu li {
+  width: 100%;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.icon-menu li .icon {
+  font-size: 22px;
+  color: #232d38;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  transition: all 0.25s ease-in-out;
+}
+
+.icon-menu li .icon:hover,
+.icon-menu li a.active .icon {
+  background: rgba(17, 24, 39, 0.08);
+  color: #111827;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Tooltip label */
+.icon-menu li span.label {
+  position: absolute;
+  left: 70px; /* to the right of icon */
+  background: rgba(17, 24, 39, 0.95);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 200;
+}
+
+/* Show label on hover of icon */
+.icon-menu li:hover span.label {
+  opacity: 1;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 100px; /* leave space for fixed sidebar */
+}
+
+/* Responsive for small screens */
+@media (max-width: 900px) {
+  .placement-analysis-container {
+    flex-direction: column;
+  }
+
+  .sidebar-vertical {
+    position: relative;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 10px 0;
+    margin: 0;
+    border-radius: 0;
+    transform: none;
+    top: 0;
+    left: 0;
+  }
+
+  .icon-menu li {
+    margin-bottom: 0;
+  }
+
+  .icon-menu li .icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .icon-menu li span.label {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
