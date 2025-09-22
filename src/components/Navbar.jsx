@@ -4,7 +4,7 @@ import "./styles/Navbar.css";
 import {
   FaFileAlt,
   FaUserCircle,
-  FaCode,
+  FaHome,
   FaBars,
   FaTimes,
   FaTachometerAlt,
@@ -44,7 +44,7 @@ const Navbar = () => {
         <ul className="navbar-links">
           <li>
             <Link to="/" onClick={closeMenu}>
-              <FaCode className="icon" /> Home
+              <FaHome className="icon" /> Home
             </Link>
           </li>
           <li>
@@ -97,7 +97,7 @@ const Navbar = () => {
           <ul className="navbar-links">
             <li>
               <Link to="/" onClick={closeMenu}>
-                <FaCode className="icon" /> Home
+                <FaHome className="icon" /> Home
               </Link>
             </li>
             <li>
