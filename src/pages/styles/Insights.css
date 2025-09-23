@@ -1,0 +1,198 @@
+.insights-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  font-family: "Poppins", sans-serif;
+  background: #ffff;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4a90e2;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.insights-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.insights-form input {
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #dcdfe3;
+  font-size: 1rem;
+  width: 250px;
+  transition: 0.3s;
+}
+.insights-form input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(74, 144, 226, 0.2);
+}
+
+.insights-form button {
+  padding: 0.7rem 1.5rem;
+  border-radius: 12px;
+  background: #4a90e2;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.insights-form button:hover {
+  background: #357abd;
+}
+
+.error-text {
+  color: red;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Grid Layout */
+.insights-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 26px;
+  align-items: stretch;
+}
+
+/* Main College Card */
+.insights-card.main-college {
+  grid-row: 1 / span 2;
+  grid-column: 1 / 2;
+  min-height: 430px;
+  max-height: 560px;
+  border-radius: 22px;
+  box-shadow: 0 16px 38px rgba(74, 144, 226, 0.12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.insights-header {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.insights-header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.college-overlay {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 38px 18px 32px 18px;
+  background: linear-gradient(
+    0deg,
+    rgba(16, 24, 38, 0.8) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.college-title {
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.23);
+  margin-bottom: 0;
+}
+
+.college-logo {
+  position: absolute;
+  bottom: 28px;
+  right: 27px;
+  width: 56px;
+  height: 56px;
+  opacity: 0.94;
+}
+
+/* Small Cards */
+.insights-card {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  padding: 1.5rem 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.055);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 220px;
+}
+
+.insights-card.small-card {
+  min-height: 165px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.insights-card h4 {
+  margin-bottom: 0.6rem;
+  color: #111;
+  font-weight: 600;
+  font-size: 1.08rem;
+}
+
+.insights-card ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  color: #555;
+  font-size: 0.99rem;
+}
+
+.insights-card p {
+  font-weight: bold;
+  color: #222;
+  font-size: 1.23rem;
+  margin: 0.4em 0 0 0;
+}
+
+/* Responsive */
+@media (max-width: 1050px) {
+  .insights-grid {
+    grid-template-columns: 350px 1fr;
+    grid-template-rows: repeat(3, minmax(165px, 1fr));
+  }
+  .insights-card.main-college {
+    grid-row: 1 / span 3;
+  }
+}
+@media (max-width: 750px) {
+  .insights-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: unset;
+  }
+  .insights-card.main-college {
+    min-height: 200px;
+    max-height: 320px;
+  }
+  .insights-header {
+    min-height: 200px;
+    max-height: 320px;
+  }
+  .insights-card.small-card {
+    min-height: 120px;
+    height: auto;
+  }
+}
