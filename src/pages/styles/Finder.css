@@ -1,119 +1,182 @@
+/* Background - Light Theme */
 .finder-container {
-  padding: 30px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: #ffffff;
   color: #222;
-  max-width: 1400px;
-  margin: auto;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.finder-container h2 {
+/* Header */
+.finder-header {
   text-align: center;
-  margin-bottom: 25px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #0d6efd;
+  margin-bottom: 30px;
+}
+.finder-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #222;
+}
+.finder-header p {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-top: 6px;
 }
 
+/* Form */
 .finder-form {
   display: flex;
-  gap: 12px;
+  gap: 15px;
   justify-content: center;
-  margin-bottom: 35px;
   flex-wrap: wrap;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: 900px;
 }
-
 .finder-form input,
 .finder-form select {
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  outline: none;
+  flex: 1;
+  min-width: 150px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid #dcdfe3;
   background: #fff;
-  font-size: 14px;
-  transition: all 0.2s ease-in-out;
+  color: #222;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
-
 .finder-form input:focus,
 .finder-form select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.2);
 }
-
 .finder-form button {
-  background: linear-gradient(135deg, #0d6efd, #4dabf7);
-  color: white;
+  background: #4a90e2;
   border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 12px;
   font-weight: 600;
-  transition: transform 0.2s, box-shadow 0.3s;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-
 .finder-form button:hover {
+  background: #357abd;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
 
+/* Results Grid */
 .college-results {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
   gap: 25px;
+  width: 100%;
 }
 
+/* College Card */
 .college-card {
-  background: #ffffff;
-  border-radius: 18px;
+  background: #fff;
   padding: 22px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
-
 .college-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
 }
 
-.college-card h3 {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #212529;
+/* Stylish College Title */
+.college-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 14px;
+  padding: 22px 28px;
+  margin-bottom: 15px;
+  box-shadow: 0 6px 24px rgba(74, 144, 226, 0.25);
+  letter-spacing: 0.8px;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Optional faint logo in background */
+.college-title::before {
+  content: '';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  background: url('/path-to/logo.png') no-repeat center center / contain;
+  opacity: 0.05;
+  z-index: 0;
 }
 
 .nirf-rank {
-  font-size: 14px;
+  font-size: 0.95rem;
   color: #6c757d;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
-
 .stats {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  color: #444;
+  margin-bottom: 18px;
+  font-size: 0.95rem;
 }
-
 .stats span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  color: #222;
+  font-weight: 500;
 }
-
 .chart-container {
-  margin: 15px 0;
-  background: #f8f9fa;
+  margin: 18px 0;
   border-radius: 12px;
-  padding: 12px;
+  overflow: hidden;
+}
+.recruiters {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: auto;
+}
+.college-address {
+  font-size: 0.9rem;
+  color: #444;
+  margin: 10px 0 8px;
+}
+.college-address a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+.college-address a:hover {
+  text-decoration: underline;
 }
 
-.recruiters {
-  font-size: 14px;
-  color: #495057;
-  background: #f1f3f5;
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 10px;
+/* Responsive */
+@media (max-width: 768px) {
+  .finder-header h1 {
+    font-size: 2rem;
+  }
+  .finder-form {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .finder-form input,
+  .finder-form select,
+  .finder-form button {
+    width: 100%;
+  }
+  .college-title {
+    font-size: 1.5rem;
+    padding: 18px 22px;
+  }
 }
