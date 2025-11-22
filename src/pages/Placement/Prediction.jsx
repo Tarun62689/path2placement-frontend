@@ -277,7 +277,7 @@ export default function PredictionWithChart() {
         flexDirection: "column",
         alignItems: "center",
         padding: "1.25rem",
-        background: "#f6f8fb",
+        background: "#ffff",
         fontFamily:
           "Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
       }}
