@@ -179,10 +179,9 @@ const parseAcademicKey = (key) => {
    Component
    ------------------------- */
 export default function PredictionWithChart() {
-  // used internally for queries + payload
   const [college, setCollege] = useState("Manipal Institute of Technology");
 
-  // 🔽 Autocomplete state (what user sees in the box)
+  // Autocomplete state
   const [query, setQuery] = useState("Manipal Institute of Technology");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -199,7 +198,7 @@ export default function PredictionWithChart() {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    setCollege(value); // still used for Supabase + backend
+    setCollege(value);
     setShowSuggestions(true);
   };
 
@@ -210,7 +209,6 @@ export default function PredictionWithChart() {
   };
 
   const handleInputBlur = () => {
-    // allow click to register before hiding
     setTimeout(() => setShowSuggestions(false), 150);
   };
 
@@ -239,9 +237,12 @@ export default function PredictionWithChart() {
           nirf_rank,
           college_image,
           city,
-          state
+          state,
+          college_type,
+          tier,
+          autonomous
         `
-        )
+        ) // ^^^ make sure these column names exist in your table
         .ilike("institute_name", `%${college}%`);
 
       if (supabaseError) throw supabaseError;
@@ -254,12 +255,26 @@ export default function PredictionWithChart() {
       const state = first.state || "";
       const rank = first.nirf_rank ?? "N/A";
       const instituteName = first.institute_name || college;
+
+      // NEW: extra meta fields
+      const collegeType = first.college_type || "N/A";
+      const tier = first.tier || "N/A";
+      const autonomous =
+        first.autonomous === true || first.autonomous === "Yes"
+          ? "Autonomous"
+          : first.autonomous === false || first.autonomous === "No"
+          ? "Non-Autonomous"
+          : first.autonomous || "N/A";
+
       setCollegeInfo({
         name: instituteName,
         image: heroImage,
         city,
         state,
         rank,
+        collegeType,
+        tier,
+        autonomous,
       });
 
       // 2) token
@@ -337,16 +352,11 @@ export default function PredictionWithChart() {
           pred?.placement ??
           pred?.placementPct ??
           null;
-        const predictedSalary =
-          pred?.median_salary ?? pred?.median_salary_lpa ?? null;
+        // ⚠️ We ignore predicted salary now (no salaryPredicted field)
         if (existing) {
           existing.placementPredicted =
             predictedPlacement !== undefined && predictedPlacement !== null
               ? Number(predictedPlacement)
-              : null;
-          existing.salaryPredicted =
-            predictedSalary !== undefined && predictedSalary !== null
-              ? Number(predictedSalary)
               : null;
           existing.placedStudents =
             pred?.placed_students ?? existing.placedStudentsPast ?? null;
@@ -358,10 +368,6 @@ export default function PredictionWithChart() {
               predictedPlacement !== undefined &&
               predictedPlacement !== null
                 ? Number(predictedPlacement)
-                : null,
-            salaryPredicted:
-              predictedSalary !== undefined && predictedSalary !== null
-                ? Number(predictedSalary)
                 : null,
             placedStudents: pred?.placed_students ?? null,
             placementPast: null,
@@ -380,7 +386,6 @@ export default function PredictionWithChart() {
             placedStudents: placed,
             placementPast: null,
             salaryPast: null,
-            salaryPredicted: null,
           });
         }
       };
@@ -464,7 +469,7 @@ export default function PredictionWithChart() {
           marginBottom: "1rem",
         }}
       >
-        {/* 🔽 Autocomplete wrapper */}
+        {/* Autocomplete wrapper */}
         <div
           style={{
             position: "relative",
@@ -654,6 +659,7 @@ export default function PredictionWithChart() {
                     }}
                   />
                   <Legend verticalAlign="top" height={36} />
+                  {/* Past placement */}
                   <Line
                     yAxisId="left"
                     type="monotone"
@@ -664,6 +670,7 @@ export default function PredictionWithChart() {
                     dot={{ r: 3 }}
                     connectNulls
                   />
+                  {/* Past salary */}
                   <Line
                     yAxisId="right"
                     type="monotone"
@@ -674,6 +681,7 @@ export default function PredictionWithChart() {
                     dot={{ r: 3 }}
                     connectNulls
                   />
+                  {/* Predicted placement */}
                   <Line
                     yAxisId="left"
                     type="monotone"
@@ -685,23 +693,13 @@ export default function PredictionWithChart() {
                     strokeDasharray="6 4"
                     connectNulls
                   />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="salaryPredicted"
-                    name="Median Salary (Predicted)"
-                    stroke="#ef4444"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                    strokeDasharray="6 4"
-                    connectNulls
-                  />
+                  {/* ⛔ salaryPredicted removed from graph */}
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Prediction Cards */}
+          {/* Prediction + Snapshot */}
           <div
             style={{
               display: "flex",
@@ -748,7 +746,9 @@ export default function PredictionWithChart() {
                       <div>
                         <div
                           style={{ fontSize: 13, color: "#111827" }}
-                        >{d.yearLabel}</div>
+                        >
+                          {d.yearLabel}
+                        </div>
                         <div
                           style={{
                             fontSize: 14,
@@ -790,7 +790,7 @@ export default function PredictionWithChart() {
               </div>
             </div>
 
-            {/* Quick stats card */}
+            {/* Quick stats card + NEW fields */}
             <div
               style={{
                 background: "#fff",
@@ -815,6 +815,18 @@ export default function PredictionWithChart() {
                 <div>
                   <span style={{ color: "#6b7280" }}>NIRF Rank:</span>{" "}
                   {collegeInfo?.rank || "-"}
+                </div>
+                <div style={{ marginTop: 6 }}>
+                  <span style={{ color: "#6b7280" }}>College Type:</span>{" "}
+                  {collegeInfo?.collegeType || "-"}
+                </div>
+                <div>
+                  <span style={{ color: "#6b7280" }}>Tier:</span>{" "}
+                  {collegeInfo?.tier || "-"}
+                </div>
+                <div>
+                  <span style={{ color: "#6b7280" }}>Autonomous:</span>{" "}
+                  {collegeInfo?.autonomous || "-"}
                 </div>
               </div>
             </div>
