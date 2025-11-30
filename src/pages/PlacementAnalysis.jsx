@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { FaChartArea, FaSearch, FaChartBar, FaTrophy } from "react-icons/fa";
+import { FaChartArea, FaSearch, FaChartBar } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./styles/PlacementAnalysis.css";
 
@@ -8,7 +8,7 @@ const links = [
   { name: "Prediction", icon: <FaChartArea />, path: "prediction" },
   { name: "Finder", icon: <FaSearch />, path: "finder" },
   { name: "Insights", icon: <FaChartBar />, path: "insights" },
-  { name: "Growth", icon: <FaTrophy />, path: "growth" },
+  // Growth removed
 ];
 
 function PlacementAnalysis() {

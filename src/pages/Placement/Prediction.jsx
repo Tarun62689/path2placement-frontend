@@ -13,10 +13,120 @@ import {
 } from "recharts";
 
 /* -------------------------
+   College list for autocomplete
+   ------------------------- */
+const COLLEGES = [
+  { institute_name: "Aligarh Muslim University" },
+  { institute_name: "Amity University" },
+  { institute_name: "Amrita Vishwa Vidyapeetham" },
+  { institute_name: "Anna University" },
+  { institute_name: "Banasthali Vidyapith" },
+  { institute_name: "Birla Institute of Technology" },
+  { institute_name: "Birla Institute of Technology & Science" },
+  { institute_name: "Centurion University of Technology and Management" },
+  { institute_name: "Chandigarh University" },
+  { institute_name: "Chitkara University" },
+  { institute_name: "Christ University" },
+  { institute_name: "Delhi Technological University" },
+  { institute_name: "Dr. B. R. Ambedkar National Institute of Technology" },
+  { institute_name: "Gandhi Institute of Technology and Management" },
+  { institute_name: "Graphic Era University" },
+  { institute_name: "Guru Gobind Singh Indraprastha University" },
+  { institute_name: "Indian Institute of Engineering Science and Technology" },
+  { institute_name: "Indian Institute of Space Science and Technology" },
+  {
+    institute_name:
+      "Indian Institute of Technology (Banaras Hindu University) Varanasi",
+  },
+  { institute_name: "Indian Institute of Technology (Indian School of Mines)" },
+  { institute_name: "Indian Institute of Technology Bhubaneswar" },
+  { institute_name: "Indian Institute of Technology Bombay" },
+  { institute_name: "Indian Institute of Technology Delhi" },
+  { institute_name: "Indian Institute of Technology Gandhinagar" },
+  { institute_name: "Indian Institute of Technology Guwahati" },
+  { institute_name: "Indian Institute of Technology Hyderabad" },
+  { institute_name: "Indian Institute of Technology Indore" },
+  { institute_name: "Indian Institute of Technology Jammu" },
+  { institute_name: "Indian Institute of Technology Jodhpur" },
+  { institute_name: "Indian Institute of Technology Kanpur" },
+  { institute_name: "Indian Institute of Technology Kharagpur" },
+  { institute_name: "Indian Institute of Technology Madras" },
+  { institute_name: "Indian Institute of Technology Mandi" },
+  { institute_name: "Indian Institute of Technology Patna" },
+  { institute_name: "Indian Institute of Technology Roorkee" },
+  { institute_name: "Indian Institute of Technology Ropar" },
+  { institute_name: "Indian Institute of Technology, Tirupati" },
+  { institute_name: "Indraprastha Institute of Information Technology" },
+  { institute_name: "Institute of Chemical Technology" },
+  {
+    institute_name:
+      "International Institute of Information Technology Hyderabad",
+  },
+  { institute_name: "Jadavpur University" },
+  { institute_name: "Jain university" },
+  { institute_name: "Jamia Millia Islamia" },
+  {
+    institute_name: "Kalasalingam Academy of Research and Higher Education",
+  },
+  { institute_name: "Kalinga Institute of Industrial Technology" },
+  {
+    institute_name:
+      "Koneru Lakshmaiah Education Foundation University (K L College of Engineering)",
+  },
+  { institute_name: "Lovely Professional University" },
+  { institute_name: "M. G. R. Educational and Research Institute" },
+  { institute_name: "Maharishi Markandeshwar" },
+  { institute_name: "Malaviya National Institute of Technology" },
+  {
+    institute_name:
+      "Manav Rachna International Institute of Research & Studies",
+  },
+  { institute_name: "Manipal Institute of Technology" },
+  { institute_name: "Motilal Nehru National Institute of Technology" },
+  { institute_name: "National Institute of Technology Calicut" },
+  { institute_name: "National Institute of Technology Durgapur" },
+  { institute_name: "National Institute of Technology Karnataka" },
+  { institute_name: "National Institute of Technology Rourkela" },
+  { institute_name: "National Institute of Technology Silchar" },
+  { institute_name: "National Institute of Technology Tiruchirappalli" },
+  { institute_name: "National Institute of Technology Warangal" },
+  { institute_name: "Netaji Subhas University of Technology (NSUT)" },
+  { institute_name: "PSG College of Technology" },
+  { institute_name: "Punjab Technical University" },
+  { institute_name: "S.R.M. Institute of Science and Technology" },
+  {
+    institute_name: "Sant Longowal Institute of Engineering & Technology",
+  },
+  {
+    institute_name: "Sardar Vallabhbhai National Institute of Technology",
+  },
+  { institute_name: "Sathyabama Institute of Science and Technology" },
+  {
+    institute_name: "Shanmugha Arts Science Technology & Research Academy",
+  },
+  { institute_name: "Sharda University" },
+  { institute_name: "Sri Sivasubramaniya Nadar College of Engineering" },
+  { institute_name: "Symbiosis International" },
+  {
+    institute_name:
+      "Thapar Institute of Engineering and Technology (Deemed-to-be-university)",
+  },
+  { institute_name: "University of Petroleum and Energy Studies" },
+  { institute_name: "Vellore Institute of Technology" },
+  {
+    institute_name:
+      "Vignan's Foundation for Science, Technology and Research",
+  },
+  { institute_name: "Visvesvaraya National Institute of Technology" },
+  { institute_name: "Visvesvaraya Technological University" },
+];
+
+/* -------------------------
    Safe Supabase client
    ------------------------- */
 const getSupabase = () => {
-  if (typeof window !== "undefined" && window.__SUPABASE_CLIENT__) return window.__SUPABASE_CLIENT__;
+  if (typeof window !== "undefined" && window.__SUPABASE_CLIENT__)
+    return window.__SUPABASE_CLIENT__;
   const URL = import.meta.env.VITE_SUPABASE_URL;
   const ANON = import.meta.env.VITE_SUPABASE_ANON_KEY;
   const client = createClient(URL, ANON);
@@ -27,18 +137,19 @@ const supabase = getSupabase();
 
 /* -------------------------
    API base + builder
-   - normalizes trailing slashes
-   - avoids /api/api by removing duplicate api/ prefix
    ------------------------- */
 const API_BASE_RAW =
-  (import.meta.env.VITE_API_BASE_URL && String(import.meta.env.VITE_API_BASE_URL)) ||
+  (import.meta.env.VITE_API_BASE_URL &&
+    String(import.meta.env.VITE_API_BASE_URL)) ||
   "https://path2placement-backend.onrender.com";
-const API_BASE = String(API_BASE_RAW).replace(/\/+$/, ""); // remove trailing slashes
+const API_BASE = String(API_BASE_RAW).replace(/\/+$/, "");
 
 const buildUrl = (path) => {
-  let cleanPath = String(path || "").trim().replace(/^\/+/, ""); // remove leading slashes
-  // If API_BASE ends with "/api" and path starts with "api/", remove the duplicate "api/"
-  if (API_BASE.toLowerCase().endsWith("/api") && cleanPath.toLowerCase().startsWith("api/")) {
+  let cleanPath = String(path || "").trim().replace(/^\/+/, "");
+  if (
+    API_BASE.toLowerCase().endsWith("/api") &&
+    cleanPath.toLowerCase().startsWith("api/")
+  ) {
     cleanPath = cleanPath.replace(/^api\//i, "");
   }
   return `${API_BASE}/${cleanPath}`;
@@ -68,11 +179,40 @@ const parseAcademicKey = (key) => {
    Component
    ------------------------- */
 export default function PredictionWithChart() {
+  // used internally for queries + payload
   const [college, setCollege] = useState("Manipal Institute of Technology");
+
+  // 🔽 Autocomplete state (what user sees in the box)
+  const [query, setQuery] = useState("Manipal Institute of Technology");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [collegeInfo, setCollegeInfo] = useState(null);
   const [error, setError] = useState("");
+
+  // Filter suggestions on first letters (case insensitive)
+  const filteredColleges = COLLEGES.filter((item) =>
+    item.institute_name.toLowerCase().startsWith(query.toLowerCase())
+  ).slice(0, 8);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    setCollege(value); // still used for Supabase + backend
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionClick = (name) => {
+    setQuery(name);
+    setCollege(name);
+    setShowSuggestions(false);
+  };
+
+  const handleInputBlur = () => {
+    // allow click to register before hiding
+    setTimeout(() => setShowSuggestions(false), 150);
+  };
 
   const handleSubmit = async (e) => {
     e?.preventDefault?.();
@@ -105,25 +245,29 @@ export default function PredictionWithChart() {
         .ilike("institute_name", `%${college}%`);
 
       if (supabaseError) throw supabaseError;
-      if (!pastData || !pastData.length) throw new Error("No past data found for this college");
+      if (!pastData || !pastData.length)
+        throw new Error("No past data found for this college");
 
-      // hero info
       const first = pastData[0] || {};
       const heroImage = first.college_image || "";
       const city = first.city || "";
       const state = first.state || "";
       const rank = first.nirf_rank ?? "N/A";
       const instituteName = first.institute_name || college;
-      setCollegeInfo({ name: instituteName, image: heroImage, city, state, rank });
+      setCollegeInfo({
+        name: instituteName,
+        image: heroImage,
+        city,
+        state,
+        rank,
+      });
 
-      // 2) Prepare axios + token if present
+      // 2) token
       let token = null;
       try {
-        // modern supabase API
         const sessionResp = await supabase.auth.getSession?.();
         token = sessionResp?.data?.session?.access_token ?? null;
       } catch {
-        // fallback older supabase SDK
         try {
           const older = supabase.auth?.session?.();
           token = older?.access_token ?? null;
@@ -143,11 +287,15 @@ export default function PredictionWithChart() {
 
       const payload = { collegeName: instituteName, college: instituteName };
 
-      // 3) Call backend using buildUrl (this prevents //api/api duplication)
-      const resp = await axios.post(buildUrl("api/ml/predict"), payload, axiosConfig);
+      // 3) backend
+      const resp = await axios.post(
+        buildUrl("api/ml/predict"),
+        payload,
+        axiosConfig
+      );
 
-      // defensive parsing
-      const apiData = resp && resp.data && typeof resp.data === "object" ? resp.data : {};
+      const apiData =
+        resp && resp.data && typeof resp.data === "object" ? resp.data : {};
       const predictions = apiData.predictions || {};
 
       // 4) build combined dataset
@@ -172,7 +320,8 @@ export default function PredictionWithChart() {
               ? Number(row.placed_students)
               : null,
           graduatingStudents:
-            row.graduating_students !== null && row.graduating_students !== undefined
+            row.graduating_students !== null &&
+            row.graduating_students !== undefined
               ? Number(row.graduating_students)
               : null,
         });
@@ -180,27 +329,40 @@ export default function PredictionWithChart() {
 
       Object.entries(predictions).forEach(([acadKey, pred]) => {
         const { label, num } = parseAcademicKey(acadKey);
-        const existing = combined.find((d) => d.year === num && d.yearLabel === label);
-        const predictedPlacement = pred?.placement_rate ?? pred?.placement ?? pred?.placementPct ?? null;
-        const predictedSalary = pred?.median_salary ?? pred?.median_salary_lpa ?? null;
+        const existing = combined.find(
+          (d) => d.year === num && d.yearLabel === label
+        );
+        const predictedPlacement =
+          pred?.placement_rate ??
+          pred?.placement ??
+          pred?.placementPct ??
+          null;
+        const predictedSalary =
+          pred?.median_salary ?? pred?.median_salary_lpa ?? null;
         if (existing) {
           existing.placementPredicted =
             predictedPlacement !== undefined && predictedPlacement !== null
               ? Number(predictedPlacement)
               : null;
           existing.salaryPredicted =
-            predictedSalary !== undefined && predictedSalary !== null ? Number(predictedSalary) : null;
-          existing.placedStudents = pred?.placed_students ?? existing.placedStudentsPast ?? null;
+            predictedSalary !== undefined && predictedSalary !== null
+              ? Number(predictedSalary)
+              : null;
+          existing.placedStudents =
+            pred?.placed_students ?? existing.placedStudentsPast ?? null;
         } else {
           combined.push({
             yearLabel: label,
             year: num,
             placementPredicted:
-              predictedPlacement !== undefined && predictedPlacement !== null
+              predictedPlacement !== undefined &&
+              predictedPlacement !== null
                 ? Number(predictedPlacement)
                 : null,
             salaryPredicted:
-              predictedSalary !== undefined && predictedSalary !== null ? Number(predictedSalary) : null,
+              predictedSalary !== undefined && predictedSalary !== null
+                ? Number(predictedSalary)
+                : null,
             placedStudents: pred?.placed_students ?? null,
             placementPast: null,
             salaryPast: null,
@@ -208,7 +370,6 @@ export default function PredictionWithChart() {
         }
       });
 
-      // ensure latest years
       const ensureYear = (yLabel, placement = null, placed = null) => {
         const { num, label } = parseAcademicKey(yLabel);
         if (!combined.some((d) => d.year === num && d.yearLabel === label)) {
@@ -226,10 +387,11 @@ export default function PredictionWithChart() {
       ensureYear("2024-25");
       ensureYear("2025-26");
 
-      combined.sort((a, b) => a.year - b.year || (a.yearLabel > b.yearLabel ? 1 : -1));
+      combined.sort(
+        (a, b) => a.year - b.year || (a.yearLabel > b.yearLabel ? 1 : -1)
+      );
       setChartData(combined);
     } catch (err) {
-      // friendly error handling
       console.error("Prediction error (client):", err);
       const status = err?.response?.status;
       if (status === 404) {
@@ -238,7 +400,11 @@ export default function PredictionWithChart() {
         setError("Unauthorized (401). Please sign in or check your token.");
       } else if (status === 500) {
         const respData = err?.response?.data;
-        setError(`Server error (500). ${respData?.error ?? respData?.message ?? "Internal server error."}`);
+        setError(
+          `Server error (500). ${
+            respData?.error ?? respData?.message ?? "Internal server error."
+          }`
+        );
       } else {
         const respData = err?.response?.data;
         const msg =
@@ -262,11 +428,12 @@ export default function PredictionWithChart() {
     }
   };
 
-  // small helpers for display
   const readablePercent = (v) =>
     v === null || v === undefined || isNaN(v) ? "-" : `${Number(v).toFixed(2)}%`;
-  const readableSalary = (v) => (v === null || v === undefined || isNaN(v) ? "-" : `${v} LPA`);
-  const readablePlaced = (v) => (v === null || v === undefined || isNaN(v) ? "-" : `${v}`);
+  const readableSalary = (v) =>
+    v === null || v === undefined || isNaN(v) ? "-" : `${v} LPA`;
+  const readablePlaced = (v) =>
+    v === null || v === undefined || isNaN(v) ? "-" : `${v}`;
 
   return (
     <div
@@ -297,20 +464,68 @@ export default function PredictionWithChart() {
           marginBottom: "1rem",
         }}
       >
-        <input
-          type="text"
-          placeholder="Enter college name"
-          value={college}
-          onChange={(e) => setCollege(e.target.value)}
+        {/* 🔽 Autocomplete wrapper */}
+        <div
           style={{
+            position: "relative",
             flex: 1,
-            padding: "0.75rem 1rem",
-            borderRadius: 10,
-            border: "1px solid #e6e9ef",
-            boxShadow: "inset 0 1px 2px rgba(16,24,40,0.03)",
-            fontSize: "0.95rem",
           }}
-        />
+        >
+          <input
+            type="text"
+            placeholder="Enter college name"
+            value={query}
+            onChange={handleInputChange}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={handleInputBlur}
+            style={{
+              width: "100%",
+              padding: "0.75rem 1rem",
+              borderRadius: 10,
+              border: "1px solid #e6e9ef",
+              boxShadow: "inset 0 1px 2px rgba(16,24,40,0.03)",
+              fontSize: "0.95rem",
+            }}
+          />
+
+          {showSuggestions && query && filteredColleges.length > 0 && (
+            <ul
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                maxHeight: 220,
+                overflowY: "auto",
+                background: "#ffffff",
+                border: "1px solid #ddd",
+                borderRadius: 8,
+                marginTop: 4,
+                listStyle: "none",
+                padding: "4px 0",
+                zIndex: 50,
+                boxShadow: "0 8px 18px rgba(0, 0, 0, 0.08)",
+              }}
+            >
+              {filteredColleges.map((item) => (
+                <li
+                  key={item.institute_name}
+                  onMouseDown={() =>
+                    handleSuggestionClick(item.institute_name)
+                  }
+                  style={{
+                    padding: "8px 12px",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  {item.institute_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         <button
           type="submit"
           disabled={loading}
@@ -322,6 +537,7 @@ export default function PredictionWithChart() {
             fontWeight: 600,
             border: "none",
             cursor: loading ? "not-allowed" : "pointer",
+            whiteSpace: "nowrap",
           }}
         >
           {loading ? "Predicting..." : "Get Predictions"}
@@ -369,7 +585,9 @@ export default function PredictionWithChart() {
             <p style={{ margin: "0.2rem 0", opacity: 0.95 }}>
               📍 {collegeInfo.city}, {collegeInfo.state}
             </p>
-            <p style={{ margin: 0, opacity: 0.95 }}>🏆 NIRF Rank: {collegeInfo.rank}</p>
+            <p style={{ margin: 0, opacity: 0.95 }}>
+              🏆 NIRF Rank: {collegeInfo.rank}
+            </p>
           </div>
         </div>
       )}
@@ -398,13 +616,21 @@ export default function PredictionWithChart() {
             <h4 style={{ margin: "0 0 8px 0" }}>Placement & Salary Trends</h4>
             <div style={{ height: 320 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 40, left: 0, bottom: 0 }}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 10, right: 40, left: 0, bottom: 0 }}
+                >
                   <CartesianGrid stroke="#f0f2f7" strokeDasharray="4 4" />
                   <XAxis dataKey="yearLabel" tick={{ fontSize: 12 }} />
                   <YAxis
                     yAxisId="left"
                     tick={{ fontSize: 12 }}
-                    label={{ value: "Placement %", angle: -90, position: "insideLeft", dy: -10 }}
+                    label={{
+                      value: "Placement %",
+                      angle: -90,
+                      position: "insideLeft",
+                      dy: -10,
+                    }}
                   />
                   <YAxis
                     yAxisId="right"
@@ -420,13 +646,14 @@ export default function PredictionWithChart() {
                   <Tooltip
                     formatter={(value, name) => {
                       if (!value && value !== 0) return "-";
-                      if (String(name).includes("Placement")) return `${Number(value).toFixed(2)}%`;
-                      if (String(name).includes("Salary")) return `${value} LPA`;
+                      if (String(name).includes("Placement"))
+                        return `${Number(value).toFixed(2)}%`;
+                      if (String(name).includes("Salary"))
+                        return `${value} LPA`;
                       return value;
                     }}
                   />
                   <Legend verticalAlign="top" height={36} />
-                  {/* Past placement */}
                   <Line
                     yAxisId="left"
                     type="monotone"
@@ -437,7 +664,6 @@ export default function PredictionWithChart() {
                     dot={{ r: 3 }}
                     connectNulls
                   />
-                  {/* Past salary */}
                   <Line
                     yAxisId="right"
                     type="monotone"
@@ -448,7 +674,6 @@ export default function PredictionWithChart() {
                     dot={{ r: 3 }}
                     connectNulls
                   />
-                  {/* Predicted placement */}
                   <Line
                     yAxisId="left"
                     type="monotone"
@@ -460,7 +685,6 @@ export default function PredictionWithChart() {
                     strokeDasharray="6 4"
                     connectNulls
                   />
-                  {/* Predicted salary */}
                   <Line
                     yAxisId="right"
                     type="monotone"
@@ -495,9 +719,19 @@ export default function PredictionWithChart() {
               }}
             >
               <h5 style={{ margin: "0 0 6px 0" }}>Predictions</h5>
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.5rem",
+                  flexWrap: "wrap",
+                }}
+              >
                 {chartData
-                  .filter((d) => d.placementPredicted !== null && d.placementPredicted !== undefined)
+                  .filter(
+                    (d) =>
+                      d.placementPredicted !== null &&
+                      d.placementPredicted !== undefined
+                  )
                   .map((d) => (
                     <div
                       key={d.yearLabel}
@@ -512,19 +746,42 @@ export default function PredictionWithChart() {
                       }}
                     >
                       <div>
-                        <div style={{ fontSize: 13, color: "#111827" }}>{d.yearLabel}</div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>
+                        <div
+                          style={{ fontSize: 13, color: "#111827" }}
+                        >{d.yearLabel}</div>
+                        <div
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 700,
+                            color: "#0f172a",
+                          }}
+                        >
                           {readablePercent(d.placementPredicted)}
                         </div>
-                        <div style={{ fontSize: 12, color: "#475569" }}>
-                          {`Placed: ${readablePlaced(d.placedStudents ?? d.placedStudentsPast)}`}
-                        </div>
+                        <div
+                          style={{ fontSize: 12, color: "#475569" }}
+                        >{`Placed: ${readablePlaced(
+                          d.placedStudents ?? d.placedStudentsPast
+                        )}`}</div>
                       </div>
                       <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: 12, color: "#64748b" }}>Change</div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: "#065f46" }}>
-                          {d.placementPast != null && d.placementPredicted != null
-                            ? `${(d.placementPredicted - d.placementPast).toFixed(2)}%`
+                        <div
+                          style={{ fontSize: 12, color: "#64748b" }}
+                        >
+                          Change
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 700,
+                            color: "#065f46",
+                          }}
+                        >
+                          {d.placementPast != null &&
+                          d.placementPredicted != null
+                            ? `${(
+                                d.placementPredicted - d.placementPast
+                              ).toFixed(2)}%`
                             : "-"}
                         </div>
                       </div>
@@ -548,13 +805,16 @@ export default function PredictionWithChart() {
                   <strong>{collegeInfo?.name}</strong>
                 </div>
                 <div style={{ marginTop: 6 }}>
-                  <span style={{ color: "#6b7280" }}>City:</span> {collegeInfo?.city || "-"}
+                  <span style={{ color: "#6b7280" }}>City:</span>{" "}
+                  {collegeInfo?.city || "-"}
                 </div>
                 <div>
-                  <span style={{ color: "#6b7280" }}>State:</span> {collegeInfo?.state || "-"}
+                  <span style={{ color: "#6b7280" }}>State:</span>{" "}
+                  {collegeInfo?.state || "-"}
                 </div>
                 <div>
-                  <span style={{ color: "#6b7280" }}>NIRF Rank:</span> {collegeInfo?.rank || "-"}
+                  <span style={{ color: "#6b7280" }}>NIRF Rank:</span>{" "}
+                  {collegeInfo?.rank || "-"}
                 </div>
               </div>
             </div>
