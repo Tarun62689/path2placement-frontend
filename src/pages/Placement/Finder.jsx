@@ -13,12 +13,30 @@ import {
 import "../styles/Finder.css";
 import collegeBg from "../../assets/college-bg.jpg";
 
+/* -------------------------
+   State list for autocomplete
+   ------------------------- */
+const STATES = [
+  { State: "West Bengal" },
+  { State: "Andhra Pradesh" },
+  { State: "Goa" },
+  { State: "Haryana" },
+  { State: "Tamil Nadu" },
+  { State: "Rajasthan" },
+  { State: "Karnataka" },
+  { State: "Delhi" },
+];
+
 export default function Finder() {
   const [location, setLocation] = useState("Karnataka");
   const [course, setCourse] = useState("CSE");
   const [topN, setTopN] = useState(5);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // 🔍 Autocomplete state for the search box
+  const [query, setQuery] = useState("Karnataka");
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleSearch = async () => {
     setLoading(true);
@@ -34,6 +52,29 @@ export default function Finder() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Filter states based on input
+  const filteredStates = STATES.filter((item) =>
+    item.State.toLowerCase().startsWith(query.toLowerCase())
+  ).slice(0, 8);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    setLocation(value); // still send this to backend
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionClick = (stateName) => {
+    setQuery(stateName);
+    setLocation(stateName);
+    setShowSuggestions(false);
+  };
+
+  const handleInputBlur = () => {
+    // Give time for click to register
+    setTimeout(() => setShowSuggestions(false), 150);
   };
 
   // Framer Motion variants
@@ -56,12 +97,31 @@ export default function Finder() {
 
       {/* Input Section */}
       <div className="finder-form">
-        <input
-          type="text"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="Enter Location (e.g., Karnataka)"
-        />
+        {/* 🔽 Autocomplete wrapper for location */}
+        <div className="finder-autocomplete">
+          <input
+            type="text"
+            value={query}
+            onChange={handleInputChange}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={handleInputBlur}
+            placeholder="Enter Location / State (e.g., Karnataka)"
+          />
+
+          {showSuggestions && query && filteredStates.length > 0 && (
+            <ul className="finder-suggestions">
+              {filteredStates.map((item) => (
+                <li
+                  key={item.State}
+                  onMouseDown={() => handleSuggestionClick(item.State)}
+                >
+                  {item.State}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         <select value={course} onChange={(e) => setCourse(e.target.value)}>
           <option value="CSE">CSE</option>
           <option value="ECE">ECE</option>
@@ -69,6 +129,7 @@ export default function Finder() {
           <option value="EEE">EEE</option>
           <option value="OVERALL">OVERALL</option>
         </select>
+
         <input
           type="number"
           value={topN}
@@ -76,6 +137,7 @@ export default function Finder() {
           min="1"
           max="20"
         />
+
         <button onClick={handleSearch} disabled={loading}>
           {loading ? "Searching..." : "🔍 Find Colleges"}
         </button>
@@ -107,22 +169,32 @@ export default function Finder() {
                 {college.College}
               </motion.h2>
 
-              <p className="nirf-rank">🏅 NIRF Rank: {college["NIRF Rank"]}</p>
+              <p className="nirf-rank">
+                🏅 NIRF Rank: {college["NIRF Rank"]}
+              </p>
 
               <div className="stats">
-                <span>📊 Avg Placement: {college["Average Placement (%)"]}%</span>
-                <span>💰 Avg Salary: {college["Average Salary (LPA)"]} LPA</span>
-                <span>🚀 Highest: {college["Highest Package (LPA)"]} LPA</span>
+                <span>
+                  📊 Avg Placement: {college["Average Placement (%)"]}%
+                </span>
+                <span>
+                  💰 Avg Salary: {college["Average Salary (LPA)"]} LPA
+                </span>
+                <span>
+                  🚀 Highest: {college["Highest Package (LPA)"]} LPA
+                </span>
               </div>
 
               {college["Placement Trend"] && (
                 <div className="chart-container">
                   <ResponsiveContainer width="100%" height={200}>
                     <LineChart
-                      data={college["Placement Trend"].map(([year, value]) => ({
-                        year,
-                        placement: value,
-                      }))}
+                      data={college["Placement Trend"].map(
+                        ([year, value]) => ({
+                          year,
+                          placement: value,
+                        })
+                      )}
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
                       <XAxis dataKey="year" stroke="#666" />
@@ -148,7 +220,8 @@ export default function Finder() {
               )}
 
               <p className="recruiters">
-                <strong>Top Recruiters:</strong> {college["Top Recruiters"]}
+                <strong>Top Recruiters:</strong>{" "}
+                {college["Top Recruiters"]}
               </p>
             </motion.div>
           );
