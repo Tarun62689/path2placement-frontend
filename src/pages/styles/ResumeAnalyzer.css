@@ -295,3 +295,51 @@
   font-size: 1rem;
   color: #6b7280;
 }
+
+
+.skills-text-section {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.skills-block {
+  flex: 1;
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.skills-block h4 {
+  margin-bottom: 0.75rem;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-chip {
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.skill-chip.matched {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.skill-chip.missing {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+

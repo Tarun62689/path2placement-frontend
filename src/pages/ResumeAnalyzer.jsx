@@ -168,8 +168,21 @@ const ModernResumeAnalyzer = () => {
     ? [{ name: "Match Score", value: analysis.score, fill: "#4f46e5" }]
     : [{ name: "Match Score", value: 0, fill: "#ddd" }];
 
-  const skillsFoundData = analysis?.skills_found?.map((s) => ({ skill: s, count: 1 })) || [];
-  const skillGapsData = analysis?.skill_gaps?.map((s) => ({ skill: s, count: 1 })) || [];
+  const combinedSkillData = analysis
+    ? [
+      ...(analysis.skills_found || []).map((skill) => ({
+        skill,
+        matched: 1,
+        gap: 0,
+      })),
+      ...(analysis.skill_gaps || []).map((skill) => ({
+        skill,
+        matched: 0,
+        gap: 1,
+      })),
+    ]
+    : [];
+
 
   const trendData = history
     .slice(0, 10)
@@ -259,7 +272,7 @@ const ModernResumeAnalyzer = () => {
             Total Resumes: {resumes.length}
           </motion.div>
           <motion.div className="kpi-card" whileHover={{ scale: 1.03 }}>
-            Skill Gaps: {skillGapsData.length}
+            Skill Gaps: {analysis?.skill_gaps?.length || 0}
           </motion.div>
         </div>
 
@@ -283,30 +296,39 @@ const ModernResumeAnalyzer = () => {
                 <div className="radial-score">{analysis.score}%</div>
               </div>
 
-              <div className="bar-charts">
-                <div className="bar-chart">
-                  <h4>Skills Matched</h4>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <BarChart data={skillsFoundData}>
-                      <XAxis dataKey="skill" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#10b981" />
-                    </BarChart>
-                  </ResponsiveContainer>
+              <div className="skills-text-section">
+                <div className="skills-block">
+                  <h4> Skills Matched</h4>
+                  {analysis.skills_found?.length > 0 ? (
+                    <div className="skills-list matched">
+                      {analysis.skills_found.map((skill, i) => (
+                        <span key={i} className="skill-chip matched">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="muted">No matched skills found</p>
+                  )}
                 </div>
-                <div className="bar-chart">
-                  <h4>Skill Gaps</h4>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <BarChart data={skillGapsData}>
-                      <XAxis dataKey="skill" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#ef4444" />
-                    </BarChart>
-                  </ResponsiveContainer>
+
+                <div className="skills-block">
+                  <h4>Skills Missing</h4>
+                  {analysis.skill_gaps?.length > 0 ? (
+                    <div className="skills-list missing">
+                      {analysis.skill_gaps.map((skill, i) => (
+                        <span key={i} className="skill-chip missing">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="muted">No skill gaps detected</p>
+                  )}
                 </div>
               </div>
+
+
 
               <div className="trend-chart">
                 <h4>Score Trend</h4>
